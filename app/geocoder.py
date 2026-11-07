@@ -38,12 +38,3 @@ def get_address_result(address):
     except Exception as e:
         return {"Error": str(e)}
 
-
-
-def build_address(street, city, state, zip_code):
-    if '' in (street, city, state, zip_code):
-        print("You are missing a value")
-        return f"Error: {e}"
-    address = f"{street}, {city}, {state} {zip_code}"
-    print(address)
-    return address
