@@ -1,4 +1,3 @@
-import census_geocoder as geocoder
 import requests
 
 def generate_results(loc, geo):
