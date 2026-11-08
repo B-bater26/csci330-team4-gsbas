@@ -5,10 +5,12 @@ let loading = false;
 
 // Input Enter
 addInputField.addEventListener('keydown', function (event) {
-    if (event.key === "Enter") {
+    if (event.key === "Enter" && loading === false) {
         addressValue = addInputField.value;
         console.log(addressValue);
         startWorkflow(addressValue)
+    } else if (loading === true) {
+        console.log("Data loading... please wait.")
     }
 })
 
@@ -20,6 +22,7 @@ async function geocode(address) {
     })
     const gsbas_cg_URL = `${gsbas_cg_base}?${params}`
     try {
+        loading = true;
         console.log("Fetching Geocode Data")
 
         const response = await fetch(gsbas_cg_URL, {
@@ -37,13 +40,29 @@ async function geocode(address) {
         const county = geo_data.county.COUNTY;
         const lat = geocode_data.latitude
         const lng = geocode_data.longitude
-        tigerLayer(state, county)
+        const tigerData = await tigerLayer(state, county)
 
 
+        const businessMarker = L.marker([lat, lng]).addTo(map);
 
-        const businessMarker = L.marker([lat, lng]).addTo(map)
+        const bufferData = turfBuffer(lat, lng);
 
-        console.log(`Successful Address Plot at ${state}, ${county}`)
+        console.log(`Successful Address Plot at ${state}, ${county}`);
+
+        console.log('Buffering Against...');
+
+        const bufferedBlocksData = bufferAgainst(bufferData, tigerData);
+        console.log(bufferedBlocksData);
+
+        L.geoJSON(bufferedBlocksData.bufferZones, {
+            style: {color: '#3366cc', weight: 1, fillOpacity: 0.1}
+        }).addTo(map);
+
+        const census_query = await fipsData(bufferedBlocksData.bufferZones);
+
+        console.log(census_query);
+
+        loading = false;
         return geocode_data
 
     } catch (error) {
@@ -53,6 +72,7 @@ async function geocode(address) {
             console.error("Geocoding Error in JS: ", error.message);
         }
 
+        loading = false;
         return { "error": error }
     }
 }

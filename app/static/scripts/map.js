@@ -31,11 +31,8 @@ async function tigerLayer(state, county) {
         if (!response.ok) throw new Error(`Error: ${response.status}`);
 
         const data = await response.json();
-        
-        L.geoJSON(data, {
-            style: {color: '#3366cc', weight: 1, fillOpacity: 0.1}
-        }).addTo(map);
-        console.log("Successful TIGER Plot")
+
+        console.log("Successful TIGER Plot");
         return data
 
     } catch (error) {
