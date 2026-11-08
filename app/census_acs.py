@@ -22,7 +22,7 @@ def retrieve_census_data(fips):
         response = requests.get(ACS_URL, params=params, timeout=15)
         data = response.json()
         response.raise_for_status()
-        if data[1][1] == -666666666:
+        if data[1][1] == "-666666666":
             return {"Blocked" : "Census Data is blocked for this area due to privacy restrictions"}
         return data
     except Exception as e:

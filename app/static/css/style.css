@@ -1,7 +1,53 @@
+/* Root */
+:root {
+    --primary-color: rgb(62, 71, 202);
+    --secondary-color: rgb(176, 189, 212);
+    --background-color: rgb(1, 8, 30);
+}
+
 /* Map Styles */
+
+#map-container {
+    display: flex;
+    width: 75%;
+    margin: 0 auto;
+    justify-content: center;
+    align-items: center;
+    flex: 1;
+    border-color: 5px solid var(--secondary-color);
+    border-radius: 5px;
+    margin-bottom: 10px;
+}
 
 #map {
     height: 500px;
     width: 100%;
-
+    border-radius: 5px;
 }
+
+/* Page Styles */
+body {
+    margin: 0;
+    padding: 0;
+    min-height: 100vh;
+
+    background-color: var(--background-color);
+    color: var(--secondary-color);
+
+    font-size: 100%;
+    line-height: 1.6;
+}
+
+/* Input Styles */
+#input-container {
+    display: flex;
+    width: 75%;
+    margin: 0 auto;
+    justify-content: center;
+    align-items: center;
+    flex: 1;
+    border-color: 5px solid var(--secondary-color);
+    border-radius: 5px;
+    margin-bottom: 10px;
+}
+
