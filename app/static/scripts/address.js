@@ -62,6 +62,10 @@ async function geocode(address) {
 
         console.log(census_query);
 
+        console.log("Generating outputs...");
+
+        generate_outputs(census_query);
+
         loading = false;
         return geocode_data
 

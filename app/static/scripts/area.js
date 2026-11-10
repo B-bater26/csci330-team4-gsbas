@@ -42,7 +42,7 @@ async function fipsData(blockGroups) {
     const response = await fetch(gsbas_q_URL, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ geoids })
+        body: JSON.stringify({ geoids, stats: checkbox_values() })
     });
 
     if (!response.ok) throw new Error(`Error During FIPS: ${response.status}`);

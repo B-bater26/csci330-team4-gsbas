@@ -51,3 +51,25 @@ body {
     margin-bottom: 10px;
 }
 
+
+/* Checkbox Styles */
+#checkboxes-container {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin: 5px;
+    flex-direction: row;
+    width: 65%;
+    margin: 0 auto;
+    justify-content: center;
+    align-items: center;
+    flex: 1;
+    border-color: 5px solid var(--secondary-color);
+    border-radius: 5px;
+    margin-bottom: 10px;
+}
+
+.check {
+    accent-color: var(--secondary-color);
+    transform: scale(1.2);
+}
