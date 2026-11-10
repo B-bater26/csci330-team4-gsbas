@@ -6,8 +6,14 @@ from dotenv import load_dotenv
 load_dotenv()
 
 ACS_URL = "https://api.census.gov/data/2024/acs/acs5"
+def clean(raw):
+    if raw is None:
+        return None
+    value = float(raw)
+    return value if value >= 0 else None
 
-def get_census_stats(geoids):
+
+def get_census_stats(geoids, codes):
     try:
         # Create a dictionary of geoids
         grouped_geo = defaultdict(set)
@@ -20,7 +26,7 @@ def get_census_stats(geoids):
         # For each state and county and wanted item in grouped geo, call Census ACS for data in that block
         for (state, county), wanted_item in grouped_geo.items():     
             params = {
-                "get": "B01003_001E",
+                "get": ",".join(codes),
                 "for": "block group:*",
                 "in": f"state:{state} county:{county} tract:*",
                 "key": os.getenv("CENSUS_API_KEY")
@@ -41,8 +47,7 @@ def get_census_stats(geoids):
                     continue
                 
                 # If we do want it, check to make sure it isn't empty or an error, then add it to results list
-                stats = (int(d["B01003_001E"]) if d["B01003_001E"] is not None else None)
-                results[geoid] = stats if stats is not None and stats > -1 else None
+                results[geoid] = {code: clean(d[code]) for code in codes}
         return results
     except Exception as e:
         return {"Error" : str(e)}

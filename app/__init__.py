@@ -33,7 +33,7 @@ def create_app(test_config=None):
                             geo_data["census_block"]["BLKGRP"]
                             ]
             census_data = census_results(fips_results)
-            return jsonifycensus_data
+            return census_data
         except Exception as e:
             return {"error": str(e)}
 
@@ -41,7 +41,8 @@ def create_app(test_config=None):
     def query():
         try:
             query_ids = request.get_json()["geoids"]
-            census_stats = get_census_stats(query_ids)
+            stats = request.get_json()["stats"]
+            census_stats = get_census_stats(query_ids, stats)
             return jsonify(census_stats)
         except Exception as e:
             return {"error": str(e)}
