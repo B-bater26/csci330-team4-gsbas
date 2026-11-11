@@ -41,8 +41,15 @@ async function tigerLayer(state, county) {
         } else {
             console.error("Tiger Error: ", error.message);
         }
-        
+
         return { "error": error }
     }
 }
 
+// Map Tracking
+let map_features = L.layerGroup().addTo(map);
+
+// Delete Map Features
+function delete_features() {
+    map_features.clearLayers();
+}
