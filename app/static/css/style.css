@@ -73,3 +73,14 @@ body {
     accent-color: var(--secondary-color);
     transform: scale(1.2);
 }
+
+/* Login Styles */
+.login-container {
+    width: 300px;
+    margin: 100px auto;
+    padding: 30px;
+    background-color: var(--background-color);
+    border: 2px solid var(--secondary-color);
+    border-radius: 5px;
+    text-align: center;
+}
