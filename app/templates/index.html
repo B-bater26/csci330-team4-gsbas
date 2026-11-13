@@ -23,34 +23,49 @@
         <input type="range" min="1" max="25" value="10" id="areaRadius">
     </div>
     <div id="checkboxes-container">
-        <input type="checkbox" id="pop_check" class="check" value="B01003_001E">
-        <label for="pop_check">Population</label>
-        <input type="checkbox" id="age_check" class="check" value="B01003_001E,B01002_001E">
-        <label for="age_check">Age</label>
-        <input type="checkbox" id="sex_check" class="check" value="B01001_002E,B01001_026E">
-        <label for="sex_check">Sex</label>
-        <input type="checkbox" id="income_check" class="check" value="B19013_001E">
-        <label for="income_check">Income</label>
-        <input type="checkbox" id="households_check" class="check" value="B11001_001E">
-        <label for="households_check">Households</label>
-        <input type="checkbox" id="vacant_check" class="check" value="B25002_003E">
-        <label for="vacant_check">Vacant Homes</label>
-        <input type="checkbox" id="home_owner_check" class="check" value="B25003_002E">
-        <label for="home_owner_check">Home Owners</label>
-        <input type="checkbox" id="renter_check" class="check" value="B25003_003E">
-        <label for="renter_check">Renters</label>
-        <input type="checkbox" id="median_home_check" class="check" value="B25077_001E">
-        <label for="median_home_check">Median Home Value</label>
-        <input type="checkbox" id="education_check" class="check" value="B15003_001E,B15003_022E,B15003_023E,B15003_024E,B15003_025E">
-        <label for="education_check">Education</label>
-        <input type="checkbox" id="employed_check" class="check" value="B23025_004E,B23025_003E">
-        <label for="employed_check">Employed</label>
-        <input type="checkbox" id="unemployed_check" class="check" value="B23025_005E,B23025_003E">
-        <label for="unemployed_check">Unemployed</label>
-        <input type="checkbox" id="commuter_check" class="check" value="B08301_001E,B08301_003E,B08301_010E">
-        <label for="commuter_check">Commuters</label>
-        <input type="checkbox" id="internet_check" class="check" value="B28002_001E,B28002_002E">
-        <label for="internet_check">Internet</label>
+
+        <label class="checkbox-label" for="pop_check"> <input type="checkbox" id="pop_check" class="check"
+                value="B01003_001E"> Population</label>
+
+        <label class="checkbox-label" for="age_check"> <input type="checkbox" id="age_check" class="check"
+                value="B01003_001E,B01002_001E"> Age</label>
+
+        <label class="checkbox-label" for="sex_check"> <input type="checkbox" id="sex_check" class="check"
+                value="B01001_002E,B01001_026E">Sex</label>
+
+        <label class="checkbox-label" for="income_check"> <input type="checkbox" id="income_check" class="check"
+                value="B19013_001E">Income</label>
+
+        <label class="checkbox-label" for="households_check"><input type="checkbox" id="households_check" class="check"
+                value="B11001_001E">Households</label>
+
+        <label class="checkbox-label" for="vacant_check"><input type="checkbox" id="vacant_check" class="check"
+                value="B25002_003E">Vacant Homes</label>
+
+        <label class="checkbox-label" for="home_owner_check"><input type="checkbox" id="home_owner_check" class="check"
+                value="B25003_002E">Home Owners</label>
+
+        <label class="checkbox-label" for="renter_check"><input type="checkbox" id="renter_check" class="check"
+                value="B25003_003E">Renters</label>
+
+        <label class="checkbox-label" for="median_home_check"><input type="checkbox" id="median_home_check"
+                class="check" value="B25077_001E"> Median Home Value</label>
+
+        <label class="checkbox-label" for="education_check"><input type="checkbox" id="education_check" class="check"
+                value="B15003_001E,B15003_022E,B15003_023E,B15003_024E,B15003_025E">Education</label>
+
+        <label class="checkbox-label" for="employed_check"><input type="checkbox" id="employed_check" class="check"
+                value="B23025_004E,B23025_005E,B23025_003E">Employed/Unemployed</label>
+
+
+        <label class="checkbox-label" for="commuter_check"><input type="checkbox" id="commuter_check" class="check"
+                value="B08301_001E,B08301_003E,B08301_010E">Commuters</label>
+
+        <label class="checkbox-label" for="internet_check"><input type="checkbox" id="internet_check" class="check"
+                value="B28002_001E,B28002_002E">Internet</label>
+    </div>
+    <div id="outputs-container">
+
     </div>
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
         integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>

@@ -9,9 +9,11 @@ function turfBuffer(lat, lng) {
     areaRadius = parseInt(areaRadiusValue, 10);
     console.log(`Buffer around ${businessPoint} at ${areaRadiusValue} miles`);
     const bufferArea = turf.buffer(businessPoint, areaRadius, { units: "miles" });
-    L.geoJSON(bufferArea, {
+    const bufferAreaPoly = L.geoJSON(bufferArea, {
         style: { color: '#cc3333', weight: 1, fillOpacity: 0.5 }
     }).addTo(map);
+
+    map_features.addLayer(bufferAreaPoly);
 
     map.setView([lat, lng], 10)
 
@@ -24,11 +26,7 @@ function bufferAgainst(buffer, blocks) {
         const { CENTLON, CENTLAT } = block.properties;
         return turf.booleanPointInPolygon(turf.point([CENTLON, CENTLAT]), buffer);
     });
-    const bufferZoneData = blocks.features.filter((_, i) => bufferZones);
-    return {
-        "bufferZoneData": bufferZoneData,
-        "bufferZones": bufferZones
-    }
+    return bufferZones
 
 }
 

@@ -54,19 +54,25 @@ body {
 
 /* Checkbox Styles */
 #checkboxes-container {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 8px;
+    display: grid;
+    grid-template-columns: repeat(4, auto);
+    gap: 4px 8px;
     margin: 5px;
-    flex-direction: row;
     width: 65%;
-    margin: 0 auto;
+    margin: 0 auto 10px;
     justify-content: center;
     align-items: center;
     flex: 1;
     border-color: 5px solid var(--secondary-color);
     border-radius: 5px;
-    margin-bottom: 10px;
+    padding: 10px;
+}
+
+.checkbox-label {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    white-space: nowrap;
 }
 
 .check {
@@ -74,6 +80,28 @@ body {
     transform: scale(1.2);
 }
 
+/* Output Styles */
+#outputs-container {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 2rem;
+    justify-content: center;
+    align-items: center;
+    margin: 50px;
+}
+
+.output-card {
+    background-color: var(--primary-color);
+    box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.3);
+    transition: 0.3s;
+    border-radius: 10px;
+    width: 300px;
+    height: auto;
+    text-align: center;
+}
+
+.output-card:hover {
+    box-shadow: 0 8px 16px 0 rgba(0, 0, 0, 0.35);
 /* Login Styles */
 .login-container {
     width: 300px;

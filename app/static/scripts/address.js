@@ -31,7 +31,9 @@ async function geocode(address) {
 
         if (!response.ok) throw new Error(`Error: ${response.status}`);
 
-        console.log("Fetched Geocode Data!")
+        console.log("Fetched Geocode Data!");
+
+        delete_features();
 
         const geocode_data = await response.json();
         console.log(geocode_data)
@@ -44,6 +46,7 @@ async function geocode(address) {
 
 
         const businessMarker = L.marker([lat, lng]).addTo(map);
+        map_features.addLayer(businessMarker)
 
         const bufferData = turfBuffer(lat, lng);
 
@@ -51,20 +54,24 @@ async function geocode(address) {
 
         console.log('Buffering Against...');
 
-        const bufferedBlocksData = bufferAgainst(bufferData, tigerData);
-        console.log(bufferedBlocksData);
+        const bufferZones = bufferAgainst(bufferData, tigerData);
+        console.log(bufferZones);
 
-        L.geoJSON(bufferedBlocksData.bufferZones, {
+        const tiger_zones = L.geoJSON(bufferZones, {
             style: {color: '#3366cc', weight: 1, fillOpacity: 0.1}
         }).addTo(map);
 
-        const census_query = await fipsData(bufferedBlocksData.bufferZones);
+        map_features.addLayer(tiger_zones);
+
+        const census_query = await fipsData(bufferZones);
 
         console.log(census_query);
 
         console.log("Generating outputs...");
 
-        generate_outputs(census_query);
+        outputs = generate_outputs(census_query);
+
+        display_outputs(outputs);
 
         loading = false;
         return geocode_data
@@ -85,7 +92,7 @@ async function geocode(address) {
 
 // Input to Output Workflow
 async function startWorkflow(address) {
-    let geocodeData = geocode(address)
+    let geocodeData = await geocode(address)
 }
 
 
