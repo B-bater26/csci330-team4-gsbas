@@ -102,4 +102,13 @@ body {
 
 .output-card:hover {
     box-shadow: 0 8px 16px 0 rgba(0, 0, 0, 0.35);
+/* Login Styles */
+.login-container {
+    width: 300px;
+    margin: 100px auto;
+    padding: 30px;
+    background-color: var(--background-color);
+    border: 2px solid var(--secondary-color);
+    border-radius: 5px;
+    text-align: center;
 }
