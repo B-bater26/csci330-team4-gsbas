@@ -69,7 +69,9 @@ async function geocode(address) {
 
         console.log("Generating outputs...");
 
-        generate_outputs(census_query);
+        outputs = generate_outputs(census_query);
+
+        display_outputs(outputs);
 
         loading = false;
         return geocode_data
