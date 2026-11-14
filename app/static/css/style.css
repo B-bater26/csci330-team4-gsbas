@@ -51,6 +51,57 @@ body {
     margin-bottom: 10px;
 }
 
+/* Title Styles */
+#title-container {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+#title {
+    margin-right: 10px;
+}
+
+#ai-icon {
+    color: rgb(74, 86, 243);
+    transition: 0.3s;
+}
+
+#ai-icon:hover {
+    color: var(--primary-color);
+    cursor: pointer;
+}
+
+/* AI Styles */
+#ai-container {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+#ai-input {
+    border-radius: 5px;
+    padding: 10px;
+    margin: 10px;
+}
+
+#ai-button {
+    border-radius: 5px;
+    padding: 10px;
+    margin: 10px;
+}
+
+#ai-output-container {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+#ai-output {
+    color: white;
+}
+
+
 
 /* Checkbox Styles */
 #checkboxes-container {
