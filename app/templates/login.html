@@ -3,21 +3,30 @@
 <head>
     <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
     <meta charset="UTF-8">
-    <title>Login</title>
+    <title>Login - GSBAS</title>
 </head>
 <body>
     <div class="login-container">
-    <h1>Login</h1>
+        <h1>Login</h1>
 
-    <form method="POST">
-        <label for="username">Username:</label>
-        <input type="text" id="username" name="username" required>
+        {% if request.args.get('registered') %}
+            <p style="color: green;">Account created successfully! Please log in.</p>
+        {% endif %}
 
-        <label for="password">Password:</label>
-        <input type="password" id="password" name="password" required>
+        {% if error %}
+            <p style="color: red;">{{ error }}</p>
+        {% endif %}
 
-        <button type="submit">Login</button>
-    </form>
+        <form method="POST" action="{{ url_for('login') }}">
+            <label for="username">Username:</label>
+            <input type="text" id="username" name="username" required>
+
+            <label for="password">Password:</label>
+            <input type="password" id="password" name="password" required>
+
+            <button type="submit">Login</button>
+        </form>
+        <p>Don't have an account? <a href="{{ url_for('register') }}">Create one</a></p>
     </div>
 </body>
 </html>

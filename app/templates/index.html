@@ -12,7 +12,14 @@
 
 <body>
 
-    <a href="{{ url_for('logout') }}">Logout</a>
+    <div class="user-bar">
+        {% if session.get('user') %}
+            <span>Logged in as: <strong>{{ session.get('user') }}</strong></span> |
+            <a href="{{ url_for('logout') }}">Logout</a>
+        {% else %}
+            <a href="{{ url_for('login') }}">Login</a>
+        {% endif %}
+    </div>
 
     <div id="map-container">
         <div id="map"></div>
