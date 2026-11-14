@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Area Comparison</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+
+<body>
+
+    <h1>Area Comparison</h1>
+
+    <a href="{{ url_for('index') }}">Back to Home</a>
+
+    <div id="comparison-container">
+        <h3>Area 1</h3>
+        <input type="text" id="compareAdress1" placeholder="First Address">
+
+        <h3>Area 2</h3>
+        <input type="text" id="compareAdress2" placeholder="Second Address">
+
+        <h3>Comparison Radius</h3>
+        <label for="areaRadius">Radius (miles):</label>
+        <input type="range" id="areaRadius" min="1" max="25" value="10">
+
+        <h3>Choose Statistics</h3>
+
+
+
+<label>
+    <input type="checkbox" id="pop_check" class="check" value="B01003_001E">
+    Population
+</label>
+
+<label>
+    <input type="checkbox" id="age_check" class="check" value="B01003_001E,B01002_001E">
+    Age
+</label>
+
+<label>
+    <input type="checkbox" id="sex_check" class="check" value="B01001_002E,B01001_026E">
+    Sex
+</label>
+
+<label>
+    <input type="checkbox" id="income_check" class="check" value="B19013_001E">
+    Income
+</label>
+
+<label>
+    <input type="checkbox" id="households_check" class="check" value="B11001_001E">
+    Households
+</label>
+
+<label>
+    <input type="checkbox" id="vacant_check" class="check" value="B25002_003E">
+    Vacant Homes
+</label>
+
+<label>
+    <input type="checkbox" id="home_owner_check" class="check" value="B25003_002E">
+    Home Owners
+</label>
+
+<label>
+    <input type="checkbox" id="renter_check" class="check" value="B25003_003E">
+    Renters
+</label>
+
+<label>
+    <input type="checkbox" id="median_home_check" class="check" value="B25077_001E,B25003_002E">
+    Median Home Value
+</label>
+
+<label>
+    <input type="checkbox" id="education_check" class="check" value="B15003_001E,B15003_022E,B15003_023E,B15003_024E,B15003_025E">
+    Education
+</label>
+
+<label>
+    <input type="checkbox" id="employed_check" class="check" value="B23025_004E,B23025_003E">
+    Employed
+</label>
+
+<label>
+    <input type="checkbox" id="unemployed_check" class="check" value="B23025_005E,B23025_003E">
+    Unemployed
+</label>
+
+<label>
+    <input type="checkbox" id="commuter_check" class="check" value="B08301_001E,B08301_003E,B08301_010E">
+    Commuters
+</label>
+
+<label>
+    <input type="checkbox" id="internet_check" class="check" value="B28002_001E,B28002_002E">
+    Internet
+</label>
+
+
+
+        <button id="compareButton">Compare</button>
+        <div id="map" style="height: 400px;"></div>
+
+        <div id="comparison-results">
+            <div id="area1-results">
+                <h3>Area 1 Results</h3>
+            </div>
+
+            <div id="area2-results">
+                <h3>Area 2 Results</h3>
+            </div>
+        </div>
+    </div>
+
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@turf/turf@7/turf.min.js"></script>
+    <script src="{{ url_for('static', filename='scripts/map.js') }}"></script>
+    <script src="{{ url_for('static', filename='scripts/area.js') }}"></script>
+    <script src="{{ url_for('static', filename='scripts/query_boxes.js') }}"></script>
+    <script src="{{ url_for('static', filename='scripts/output.js') }}"></script>
+    <script src="{{ url_for('static', filename='scripts/comparison.js') }}"></script>
+
+</body>
+</html>
