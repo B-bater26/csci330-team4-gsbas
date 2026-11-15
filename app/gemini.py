@@ -64,7 +64,11 @@ def suggest_stats(question):
     attempt to offer suggestions.
     
     For options 1 and 2, state something along the lines that you have set up the query for them and they just need to submit the address to continue. You
-    don't actually have to do anything, as the backend is handled elsewhere, but just notify them that you have done that.
+    don't actually have to do anything, as the backend is handled elsewhere, but just notify them that you have done that. If the user fell into option 3,
+    such that they were asking for information that can cause harm, reject it and do not mention filling out boxes (send code -111222333).
+
+    To reiterate option 3 for the refusal situation: If they ask for potentially harmful information and you send code -111222333, do NOT mention setting up the query for them or urge them to
+    submit an address. Do not offer alternatives. Stop with the rejection, full stop.
 
     The user does not need to interact with the codes specifically, and are expected to have limited knowledge of geospatial
     analysis concepts. Recommend a combination of codes based on the question. Some codes are grouped under an umbrella; in such
