@@ -35,7 +35,7 @@ async function fipsData(blockGroups) {
     const geoids = blockGroups.map(f => f.properties.GEOID);
     console.log(geoids);
 
-    const gsbas_q_URL = "http://127.0.0.1:5000/api/query";
+    const gsbas_q_URL = "/api/query";
 
     const response = await fetch(gsbas_q_URL, {
         method: 'POST',
