@@ -22,8 +22,8 @@ def create_app(test_config=None):
 
     @app.route('/')
     def index():
-        #if "user" not in session:
-        #    return redirect(url_for("login"))
+        if "user" not in session:
+            return redirect(url_for("login"))
         return render_template("index.html", username=session.get("user"))
 
     @app.route('/comparison')

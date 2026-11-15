@@ -39,7 +39,7 @@ async function geocode(address) {
         console.log(geocode_data)
         const geo_data = geocode_data.geo_data;
         const state = geo_data.state.STATE;
-        const county = geo_data.county.COUNTY;s
+        const county = geo_data.county.COUNTY;
         const lat = geocode_data.latitude
         const lng = geocode_data.longitude
         const tigerData = await tigerLayer(state, county)
