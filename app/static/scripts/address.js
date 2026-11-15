@@ -16,7 +16,7 @@ addInputField.addEventListener('keydown', function (event) {
 
 // Geocode Retrieval and Tiger Plotting
 async function geocode(address) {
-    const gsbas_cg_base = 'http://127.0.0.1:5000/api/geocode'
+    const gsbas_cg_base = '/api/geocode'
     const params = new URLSearchParams({
         address: `${address}`
     })
