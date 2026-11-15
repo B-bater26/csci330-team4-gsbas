@@ -3,14 +3,14 @@ let areaRadiusInput = document.getElementById("areaRadius");
 let areaRadiusValue;
 
 // Buffer around point
-function turfBuffer(lat, lng) {
+function turfBuffer(lat, lng, color = '#cc3333') {
     const businessPoint = turf.point([lng, lat]);
     areaRadiusValue = areaRadiusInput.value;
     areaRadius = parseInt(areaRadiusValue, 10);
     console.log(`Buffer around ${businessPoint} at ${areaRadiusValue} miles`);
     const bufferArea = turf.buffer(businessPoint, areaRadius, { units: "miles" });
     const bufferAreaPoly = L.geoJSON(bufferArea, {
-        style: { color: '#cc3333', weight: 1, fillOpacity: 0.5 }
+        style: { color: color, weight: 1, fillOpacity: 0.5 }
     }).addTo(map);
 
     map_features.addLayer(bufferAreaPoly);
