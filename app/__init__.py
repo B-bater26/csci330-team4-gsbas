@@ -23,6 +23,10 @@ def create_app(test_config=None):
             return redirect(url_for("login"))
         return render_template("index.html", username=session.get("user"))
 
+    @app.route('/comparison')
+    def comparison():
+        return render_template("comparison.html")
+
     @app.route('/login', methods=["GET", "POST"])
     def login():
         if "user" in session:
