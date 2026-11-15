@@ -63,6 +63,8 @@ def suggest_stats(question):
     3) The user asks an unrelated question. Say you cannot help if it is entirely out of scope, and use -111222333. If you can help to some degree,
     attempt to offer suggestions.
     
+    For options 1 and 2, state something along the lines that you have set up the query for them and they just need to submit the address to continue. You
+    don't actually have to do anything, as the backend is handled elsewhere, but just notify them that you have done that.
 
     The user does not need to interact with the codes specifically, and are expected to have limited knowledge of geospatial
     analysis concepts. Recommend a combination of codes based on the question. Some codes are grouped under an umbrella; in such

@@ -51,6 +51,13 @@ body {
     margin-bottom: 10px;
 }
 
+#addressInput {
+    background-color: var(--secondary-color);
+    padding: 10px;
+    border-radius: 10px;
+    margin: 10px;
+}
+
 /* Title Styles */
 #title-container {
     display: flex;
@@ -65,6 +72,8 @@ body {
 #ai-icon {
     color: rgb(74, 86, 243);
     transition: 0.3s;
+    -webkit-user-select: none;
+    user-select: none;
 }
 
 #ai-icon:hover {
@@ -83,12 +92,16 @@ body {
     border-radius: 5px;
     padding: 10px;
     margin: 10px;
+    display: none;
+    background-color: var(--secondary-color);
 }
 
 #ai-button {
     border-radius: 5px;
     padding: 10px;
     margin: 10px;
+    display: none;
+    background-color: var(--secondary-color);
 }
 
 #ai-output-container {
@@ -99,6 +112,8 @@ body {
 
 #ai-output {
     color: white;
+    display: none;
+    width: 50%;
 }
 
 
@@ -139,11 +154,14 @@ body {
     justify-content: center;
     align-items: center;
     margin: 50px;
+    background-color: rgba(174, 241, 255, 0.738);
+    border-radius: 30px;
+    color: black;
 }
 
 .output-card {
     background-color: var(--primary-color);
-    box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.3);
+    box-shadow: 0 4px 8px 0 rgba(93, 93, 93, 0.3);
     transition: 0.3s;
     border-radius: 10px;
     width: 300px;
@@ -152,5 +170,5 @@ body {
 }
 
 .output-card:hover {
-    box-shadow: 0 8px 16px 0 rgba(0, 0, 0, 0.35);
+    box-shadow: 0 8px 16px 0 rgba(93, 93, 93, 0.3);
 }
