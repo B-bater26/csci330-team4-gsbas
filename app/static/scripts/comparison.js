@@ -26,6 +26,11 @@ document.getElementById("compareButton").onclick = async function() {
     let address1 = document.getElementById("compareAdress1").value;
     let address2 = document.getElementById("compareAdress2").value;
 
+            if (document.querySelectorAll(".check:checked").length === 0) {
+            alert("Please select at least one option.");
+            return;
+        }
+
     document.getElementById("area1-results").innerHTML = "<h3>Area 1 Results</h3>";
     document.getElementById("area2-results").innerHTML = "<h3>Area 2 Results</h3>";
 
