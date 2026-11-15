@@ -7,6 +7,8 @@ from werkzeug.security import generate_password_hash, check_password_hash
 from app.census_acs import retrieve_census_data
 from app.geocoder import get_address_result
 from app.query_data_census import get_census_stats
+from app.gemini import suggest_stats
+import json
 
 load_dotenv()
 
@@ -141,5 +143,17 @@ def create_app(test_config=None):
             return jsonify(census_stats)
         except Exception as e:
             return {"error": str(e)}
+
+    @app.route('/api/query-suggestion', methods=["POST"])
+    def query_suggestion():
+        question = request.get_json()['question']
+        suggestion = suggest_stats(question)
+        return suggestion
+        
+        
+        
+
+
+
 
     return app

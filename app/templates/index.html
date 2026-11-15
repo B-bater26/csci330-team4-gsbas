@@ -26,6 +26,19 @@
         <div id="map"></div>
     </div>
 
+    <div id="title-container">
+        <h1 id="title">Find Statistics Now</h1>
+        <h1 id="ai-icon" title="Chat with AI">✎</h1>
+    </div>
+
+    <div id="ai-container">
+        <input id="ai-input" type="text" placeholder="Ask AI About Your Business!" />
+        <button id="ai-button">Ask</button>
+    </div>
+    <div id="ai-output-container">
+        <p id="ai-output"></p>
+    </div>
+
     <div id="input-container">
         <input type="text" id="addressInput" placeholder="Enter Address">
         <input type="range" min="1" max="25" value="10" id="areaRadius">
@@ -83,6 +96,7 @@
     <script src="{{ url_for('static', filename='scripts/area.js') }}"></script>
     <script src="{{ url_for('static', filename='scripts/query_boxes.js') }}"></script>
     <script src="{{ url_for('static', filename='scripts/output.js') }}"></script>
+    <script src="{{ url_for('static', filename='scripts/suggestion.js') }}"></script>
 </body>
 
 </html>
