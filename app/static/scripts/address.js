@@ -71,6 +71,10 @@ async function geocode(address) {
 
         outputs = generate_outputs(census_query);
 
+        //Home value displaying owners fix
+        if (!document.getElementById("home_owner_check").checked) {
+            delete outputs["Home Owners"];
+        }
         display_outputs(outputs);
 
         loading = false;
