@@ -58,6 +58,7 @@ async function geocode(address) {
         map_features.addLayer(businessMarker)
 
         const bufferData = turfBuffer(lat, lng);
+        showAmenities(lat, lng);
 
         console.log(`Successful Address Plot at ${state}, ${county}`);
 

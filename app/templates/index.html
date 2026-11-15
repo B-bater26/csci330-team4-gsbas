@@ -86,14 +86,21 @@
                 value="B28002_001E,B28002_002E">Internet</label>
     </div>
     <div id="outputs-container">
-
     </div>
+
+    <div id="amenities-container">
+        <h3>Nearby Amenities</h3>
+        <ul id="amenities-list"></ul>
+    </div>
+
+    
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
         integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
     <script src="https://cdn.jsdelivr.net/npm/@turf/turf@7/turf.min.js"></script>
     <script src="{{ url_for('static', filename='scripts/map.js') }}"></script>
     <script src="{{ url_for('static', filename='scripts/address.js') }}"></script>
     <script src="{{ url_for('static', filename='scripts/area.js') }}"></script>
+    <script src="{{ url_for('static', filename='scripts/amenities.js') }}"></script>
     <script src="{{ url_for('static', filename='scripts/query_boxes.js') }}"></script>
     <script src="{{ url_for('static', filename='scripts/output.js') }}"></script>
     <script src="{{ url_for('static', filename='scripts/suggestion.js') }}"></script>
