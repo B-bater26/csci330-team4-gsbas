@@ -120,6 +120,7 @@ function generate_outputs(census_query) {
 
     return {
         "Population": population_output,
+        "Households": households,
         "Sex": {
             "Male Percentage": male_pop_total,
             "Female Percentage": female_pop_total
@@ -146,8 +147,8 @@ function generate_outputs(census_query) {
 }
 
 // Display Outputs
-function display_outputs(outputs) {
-    const output_container = document.getElementById("outputs-container");
+function display_outputs(outputs, containerId = "outputs-container") {
+    const output_container = document.getElementById(containerId);
     let cards = ""
     Object.entries(outputs).forEach(([key, value]) => {
         if (value && !(typeof value === 'object')) {

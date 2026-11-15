@@ -11,6 +11,17 @@
 </head>
 
 <body>
+
+    <div class="user-bar">
+        {% if session.get('user') %}
+            <span>Logged in as: <strong>{{ session.get('user') }}</strong></span> |
+            <a href="{{ url_for('logout') }}">Logout</a>
+        {% else %}
+            <a href="{{ url_for('login') }}">Login</a>
+        {% endif %}
+    </div>
+    <a href="{{ url_for('comparison') }}" id="comparison-link">Area Comparison</a>
+
     <div id="map-container">
         <div id="map"></div>
     </div>
