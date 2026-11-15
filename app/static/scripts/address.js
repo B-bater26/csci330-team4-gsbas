@@ -39,7 +39,7 @@ async function geocode(address) {
         console.log(geocode_data)
         const geo_data = geocode_data.geo_data;
         const state = geo_data.state.STATE;
-        const county = geo_data.county.COUNTY;
+        const county = geo_data.county.COUNTY;s
         const lat = geocode_data.latitude
         const lng = geocode_data.longitude
         const tigerData = await tigerLayer(state, county)
@@ -49,6 +49,7 @@ async function geocode(address) {
         map_features.addLayer(businessMarker)
 
         const bufferData = turfBuffer(lat, lng);
+   s     showAmenities(lat, lng);
 
         console.log(`Successful Address Plot at ${state}, ${county}`);
 
