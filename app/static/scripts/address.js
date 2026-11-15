@@ -6,6 +6,10 @@ let loading = false;
 // Input Enter
 addInputField.addEventListener('keydown', function (event) {
     if (event.key === "Enter" && loading === false) {
+        if (document.querySelectorAll(".check:checked").length === 0) {
+            alert("Please select at least one option.");
+            return;
+        }
         addressValue = addInputField.value;
         console.log(addressValue);
         startWorkflow(addressValue)
@@ -37,6 +41,11 @@ async function geocode(address) {
 
         const geocode_data = await response.json();
         console.log(geocode_data)
+        if (!geocode_data || !Number.isFinite(geocode_data.latitude) || !Number.isFinite(geocode_data.longitude)) {
+            alert("Please enter a valid address.");
+            loading = false;
+            return;
+        }
         const geo_data = geocode_data.geo_data;
         const state = geo_data.state.STATE;
         const county = geo_data.county.COUNTY;
