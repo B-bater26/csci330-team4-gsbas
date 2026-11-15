@@ -112,8 +112,8 @@ function generate_outputs(census_query) {
     const median_income = income_weight > 0 ? income_median_total / income_weight : null;
     const home_value = hv_weight > 0 ? hv_total / hv_weight : null;
     const educated_pop = pop_25 > 0 ? education_total / pop_25 * 100 : null;
-    const employed = population_output > 0 ? employed_total / workforce * 100 : null;
-    const unemployed = population_output > 0 ? unemployed_total / workforce * 100 : null;
+    const employed = workforce > 0 ? employed_total / workforce * 100 : null;
+    const unemployed = workforce > 0 ? unemployed_total / workforce * 100 : null;
     const commuter_workers = workers > 0 ? drivers_total / workers * 100 : null;
     const transit_workers = workers > 0 ? transit_total / workers * 100 : null;
     const internet_full = internet_h > 0 ? internet_total / internet_h * 100 : null;
