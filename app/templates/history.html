@@ -1,0 +1,682 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+        integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="" />
+    <title>Saved Analyses &amp; Symbology Customizer - GSBAS</title>
+    <style>
+        .studio-wrapper {
+            width: 92%;
+            max-width: 1450px;
+            margin: 20px auto;
+            display: grid;
+            grid-template-columns: 290px 1fr 320px;
+            gap: 18px;
+            align-items: start;
+        }
+        .panel-box {
+            background-color: rgba(15, 25, 60, 0.95);
+            border: 2px solid var(--secondary-color);
+            border-radius: 8px;
+            padding: 16px;
+        }
+        .panel-box h2, .panel-box h3 {
+            margin-top: 0;
+            color: #ffffff;
+            border-bottom: 1px solid rgba(176, 189, 212, 0.3);
+            padding-bottom: 8px;
+        }
+        .saved-item {
+            border: 1px solid rgba(176, 189, 212, 0.4);
+            border-radius: 6px;
+            padding: 10px;
+            margin-bottom: 10px;
+            cursor: pointer;
+            transition: 0.2s;
+            background: rgba(1, 8, 30, 0.7);
+        }
+        .saved-item:hover, .saved-item.active {
+            border-color: #66b2ff;
+            background: rgba(62, 71, 202, 0.35);
+        }
+        .saved-item-title { font-weight: bold; color: #fff; font-size: 0.95rem; }
+        .saved-item-meta { font-size: 0.8rem; color: var(--secondary-color); margin-top: 4px; }
+        .delete-btn {
+            margin-top: 8px;
+            background: #b02a37;
+            color: white;
+            border: none;
+            padding: 4px 10px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 0.8rem;
+        }
+        .delete-btn:hover { background: #dc3545; }
+        #history-map {
+            height: 460px;
+            width: 100%;
+            border-radius: 6px;
+            border: 2px solid var(--secondary-color);
+        }
+        .control-group {
+            margin-bottom: 13px;
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+        }
+        .control-group label { font-weight: bold; font-size: 0.88rem; color: #fff; }
+        .control-group select, .control-group input[type="color"], .control-group input[type="range"] {
+            padding: 6px;
+            border-radius: 4px;
+            border: 1px solid var(--secondary-color);
+            background: #0b1437;
+            color: #fff;
+        }
+        .swatch-row { display: flex; gap: 8px; margin-top: 4px; }
+        .swatch {
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            border: 2px solid #fff;
+            cursor: pointer;
+        }
+        .save-vis-btn {
+            width: 100%;
+            padding: 10px;
+            background-color: var(--primary-color);
+            color: white;
+            border: 1px solid #fff;
+            border-radius: 5px;
+            font-weight: bold;
+            cursor: pointer;
+            margin-top: 6px;
+        }
+        .save-vis-btn:hover { background-color: #525ce0; }
+        .mini-stats {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-top: 14px;
+        }
+        .mini-stat-card {
+            background-color: var(--primary-color);
+            border-radius: 6px;
+            padding: 10px 14px;
+            min-width: 135px;
+            text-align: center;
+            color: #fff;
+            border: 2px solid transparent;
+            cursor: pointer;
+            transition: 0.15s;
+        }
+        .mini-stat-card:hover, .mini-stat-card.selected-attr {
+            border-color: #ffd43b;
+            background-color: #2b3494;
+        }
+        .mini-stat-card small { display: block; opacity: 0.85; font-size: 0.78rem; }
+        .mini-stat-card strong { font-size: 1.1rem; }
+        .map-legend {
+            background: rgba(11, 20, 55, 0.92);
+            color: #fff;
+            padding: 8px 12px;
+            border-radius: 6px;
+            border: 1px solid var(--secondary-color);
+            font-size: 0.82rem;
+            line-height: 1.4;
+        }
+        .heat-bar {
+            height: 10px;
+            width: 155px;
+            border-radius: 4px;
+            margin: 5px 0;
+            background: linear-gradient(to right, #2b83ba, #66c2a5, #fee08b, #f46d43, #d53e4f);
+        }
+    </style>
+</head>
+<body>
+
+    <div class="user-bar">
+        <span>Logged in as: <strong>{{ session.get('user') }}</strong></span> |
+        <a href="{{ url_for('index') }}">Main Dashboard</a> |
+        <a href="{{ url_for('comparison') }}">Area Comparison</a> |
+        <a href="{{ url_for('logout') }}">Logout</a>
+    </div>
+
+    <div class="studio-wrapper">
+        <!-- LEFT PANEL: Saved Analyses List (FR-03) -->
+        <div class="panel-box">
+            <h3>Saved Analyses</h3>
+            {% if error %}
+                <p style="color: #ff6b6b;">{{ error }}</p>
+            {% endif %}
+
+            {% if analyses %}
+                <div id="saved-list">
+                    {% for item in analyses %}
+                    <div class="saved-item" data-index="{{ loop.index0 }}" onclick="selectAnalysis({{ loop.index0 }})">
+                        <div class="saved-item-title">{{ item.address }}</div>
+                        <div class="saved-item-meta">
+                            True Search Radius: {{ item.radius }} mi &bull; {{ item.date }}
+                        </div>
+                        <button type="button" class="delete-btn" onclick="event.stopPropagation(); deleteAnalysis({{ item.analysis_id }})">
+                            Delete
+                        </button>
+                    </div>
+                    {% endfor %}
+                </div>
+            {% else %}
+                <p>No saved analyses yet. Go to the <a href="{{ url_for('index') }}" style="color:#66b2ff;">Main Dashboard</a>, search an address, and click <strong>Save Analysis</strong>.</p>
+            {% endif %}
+        </div>
+
+        <!-- CENTER PANEL: Interactive Leaflet Map & Saved Stats -->
+        <div class="panel-box">
+            <h2 id="active-title">Select a Saved Analysis</h2>
+            <div id="history-map"></div>
+            <p style="font-size:0.8rem; color:var(--secondary-color); margin: 8px 0 0 0;">
+                Tip: Click any stat card below to instantly visualize that attribute as a thermal heatmap on the map.
+            </p>
+            <div id="saved-stats-container" class="mini-stats"></div>
+        </div>
+
+        <!-- RIGHT PANEL: FR-01 Symbology & Attribute Visualization Tools -->
+        <div class="panel-box">
+            <h3>Symbology &amp; Attribute Tools</h3>
+
+            <div class="control-group">
+                <label for="attr-mode">Attribute Visualization Layer</label>
+                <select id="attr-mode" onchange="renderCurrentLayer()">
+                    <option value="boundary_only">True Radius Zone (Standard)</option>
+                    <option value="heatmap">Attribute Density Heatmap</option>
+                    <option value="dashed_zone">Dashed Survey Boundary</option>
+                </select>
+            </div>
+
+            <div class="control-group">
+                <label for="attr-metric">Mapped Attribute Metric</label>
+                <select id="attr-metric" onchange="renderCurrentLayer()">
+                    <option value="">-- Select Saved Attribute --</option>
+                </select>
+            </div>
+
+            <div class="control-group">
+                <label for="vis-shape">Marker Symbology Shape</label>
+                <select id="vis-shape" onchange="renderCurrentLayer()">
+                    <option value="circle">Circle Pin</option>
+                    <option value="square">Square Badge</option>
+                    <option value="diamond">Diamond Marker</option>
+                    <option value="hexagon">Hexagon Badge</option>
+                </select>
+            </div>
+
+            <div class="control-group">
+                <label for="vis-color">Symbology Color</label>
+                <input type="color" id="vis-color" value="#cc3333" onchange="renderCurrentLayer()">
+                <div class="swatch-row">
+                    <div class="swatch" style="background:#cc3333;" onclick="setColor('#cc3333')"></div>
+                    <div class="swatch" style="background:#3e47ca;" onclick="setColor('#3e47ca')"></div>
+                    <div class="swatch" style="background:#2b8a3e;" onclick="setColor('#2b8a3e')"></div>
+                    <div class="swatch" style="background:#e67700;" onclick="setColor('#e67700')"></div>
+                    <div class="swatch" style="background:#862e9c;" onclick="setColor('#862e9c')"></div>
+                </div>
+            </div>
+
+            <div class="control-group">
+                <label for="vis-scale">Marker Icon Scale: <span id="scale-label">1.0x</span></label>
+                <input type="range" id="vis-scale" min="0.6" max="2.0" step="0.1" value="1.0" oninput="updateScaleLabel(); renderCurrentLayer();">
+            </div>
+
+            <div class="control-group">
+                <label for="vis-stroke">Boundary Stroke Weight: <span id="stroke-label">3px</span></label>
+                <input type="range" id="vis-stroke" min="1" max="8" step="1" value="3" oninput="updateStrokeLabel(); renderCurrentLayer();">
+            </div>
+
+            <div class="control-group">
+                <label for="vis-symbol">Business Symbology Icon</label>
+                <select id="vis-symbol" onchange="renderCurrentLayer()">
+                    <option value="storefront">Storefront / Retail</option>
+                    <option value="restaurant">Restaurant / Dining</option>
+                    <option value="office">Corporate / Office</option>
+                    <option value="warehouse">Warehouse / Logistics</option>
+                    <option value="star">Target Expansion Star</option>
+                </select>
+            </div>
+
+            <button type="button" class="save-vis-btn" onclick="saveVisualSettings()">Save Symbology to DB</button>
+            <p id="vis-status" style="font-size: 0.85rem; margin-top: 8px; text-align: center;"></p>
+        </div>
+    </div>
+
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
+        integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+    <script src="https://cdn.jsdelivr.net/npm/@turf/turf@7/turf.min.js"></script>
+    <script>
+        const analysesData = {{ analyses | tojson }};
+        let currentIndex = -1;
+        let currentCoords = null;
+
+        // Per-analysis cache so switching cards or colors is 0ms instantaneous
+        let cachedAnalysisId = null;
+        let cachedClippedBlocks = [];
+        let cachedCensusStats = {};
+        let blockFetchPromise = null;
+
+        const map = L.map('history-map').setView([33.836, -79.0478], 10);
+        L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            maxZoom: 20,
+            attribution: '&copy; OpenStreetMap contributors'
+        }).addTo(map);
+
+        let visualLayerGroup = L.layerGroup().addTo(map);
+
+        const legendControl = L.control({ position: "bottomright" });
+        legendControl.onAdd = function() {
+            const div = L.DomUtil.create("div", "map-legend");
+            div.id = "map-legend-box";
+            div.innerHTML = "Select an analysis";
+            return div;
+        };
+        legendControl.addTo(map);
+
+        const symbolBadges = {
+            storefront: "SHOP",
+            restaurant: "FOOD",
+            office: "HQ",
+            warehouse: "HUB",
+            star: "&#9733;"
+        };
+
+        const metricToCode = {
+            "Population": "B01003_001E",
+            "Households": "B11001_001E",
+            "Median Age": "B01002_001E",
+            "Median Household Income": "B19013_001E",
+            "Vacant Homes": "B25002_003E",
+            "Home Owners": "B25003_002E",
+            "Renters": "B25003_003E",
+            "Median Home Value": "B25077_001E",
+            "Male Percentage": "B01001_002E",
+            "Female Percentage": "B01001_026E",
+            "Educated (% over 25)": "B15003_022E",
+            "Employed Percentage": "B23025_004E",
+            "Unemployed Percentage": "B23025_005E",
+            "Commuters Who Drive (%)": "B08301_003E",
+            "Commuters Who Use Public Transit (%)": "B08301_010E",
+            "Households with Internet (%)": "B28002_002E"
+        };
+
+        function setColor(hex) {
+            document.getElementById("vis-color").value = hex;
+            renderCurrentLayer();
+        }
+
+        function updateScaleLabel() {
+            const val = parseFloat(document.getElementById("vis-scale").value).toFixed(1);
+            document.getElementById("scale-label").textContent = `${val}x`;
+        }
+
+        function updateStrokeLabel() {
+            const val = document.getElementById("vis-stroke").value;
+            document.getElementById("stroke-label").textContent = `${val}px`;
+        }
+
+        function selectMetric(metricName) {
+            document.getElementById("attr-metric").value = metricName;
+            if (document.getElementById("attr-mode").value === "boundary_only") {
+                document.getElementById("attr-mode").value = "heatmap";
+            }
+            renderCurrentLayer();
+        }
+
+        // Smooth continuous multi-stop thermal gradient (Deep Blue -> Teal -> Yellow -> Orange -> Crimson)
+        function getThermalGradientColor(ratio) {
+            const stops = [
+                [43, 131, 186],  // #2b83ba (Low)
+                [102, 194, 165], // #66c2a5
+                [254, 224, 139], // #fee08b
+                [244, 109, 67],  // #f46d43
+                [213, 62, 79]    // #d53e4f (High)
+            ];
+            const clamped = Math.max(0, Math.min(1, ratio));
+            const scaled = clamped * (stops.length - 1);
+            const idx = Math.floor(scaled);
+            const t = scaled - idx;
+            const c1 = stops[idx];
+            const c2 = stops[Math.min(idx + 1, stops.length - 1)];
+            const r = Math.round(c1[0] + (c2[0] - c1[0]) * t);
+            const g = Math.round(c1[1] + (c2[1] - c1[1]) * t);
+            const b = Math.round(c1[2] + (c2[2] - c1[2]) * t);
+            return `rgb(${r}, ${g}, ${b})`;
+        }
+
+        // Preloads and caches clipped geometries + all saved metrics in 1 batch request
+        async function ensureAnalysisBlocksCached(item, trueCircle) {
+            if (cachedAnalysisId === item.analysis_id && cachedClippedBlocks.length > 0) {
+                return;
+            }
+            if (blockFetchPromise) {
+                await blockFetchPromise;
+                return;
+            }
+
+            blockFetchPromise = (async () => {
+                const [minLng, minLat, maxLng, maxLat] = turf.bbox(trueCircle);
+                const tigerUrl = `https://tigerweb.geo.census.gov/arcgis/rest/services/TIGERweb/tigerWMS_Current/MapServer/10/query?` +
+                    new URLSearchParams({
+                        geometry: `${minLng},${minLat},${maxLng},${maxLat}`,
+                        geometryType: 'esriGeometryEnvelope',
+                        inSR: '4326',
+                        spatialRel: 'esriSpatialRelIntersects',
+                        outFields: 'GEOID,STATE,COUNTY,TRACT,BLKGRP,CENTLAT,CENTLON',
+                        returnGeometry: 'true',
+                        outSR: '4326',
+                        f: 'geojson'
+                    });
+
+                const tigerRes = await fetch(tigerUrl);
+                const tigerJson = await tigerRes.json();
+
+                const clipped = [];
+                for (const f of (tigerJson.features || [])) {
+                    try {
+                        if (!turf.booleanIntersects(f, trueCircle)) continue;
+                        const intersected = turf.intersect(turf.featureCollection([f, trueCircle]));
+                        clipped.push({
+                            geoid: f.properties.GEOID,
+                            blkgrp: f.properties.BLKGRP,
+                            geometry: intersected || f
+                        });
+                    } catch (e) {
+                        clipped.push({
+                            geoid: f.properties.GEOID,
+                            blkgrp: f.properties.BLKGRP,
+                            geometry: f
+                        });
+                    }
+                }
+
+                const geoids = clipped.map(c => c.geoid);
+                const allCodes = [...new Set(
+                    item.stats.map(s => metricToCode[s.name] || "B01003_001E")
+                )];
+
+                let statsMap = {};
+                if (geoids.length > 0 && allCodes.length > 0) {
+                    const censusRes = await fetch("/api/query", {
+                        method: "POST",
+                        headers: { "Content-Type": "application/json" },
+                        body: JSON.stringify({ geoids: geoids, stats: allCodes })
+                    });
+                    statsMap = await censusRes.json();
+                }
+
+                cachedAnalysisId = item.analysis_id;
+                cachedClippedBlocks = clipped;
+                cachedCensusStats = statsMap;
+            })();
+
+            try {
+                await blockFetchPromise;
+            } finally {
+                blockFetchPromise = null;
+            }
+        }
+
+        async function selectAnalysis(index) {
+            currentIndex = index;
+            const item = analysesData[index];
+            if (!item) return;
+
+            cachedAnalysisId = null;
+            cachedClippedBlocks = [];
+            cachedCensusStats = {};
+
+            document.querySelectorAll(".saved-item").forEach((el, idx) => {
+                el.classList.toggle("active", idx === index);
+            });
+
+            document.getElementById("active-title").textContent = `${item.address} (${item.radius} mi True Search Radius)`;
+            document.getElementById("vis-shape").value = item.visual.shape;
+            document.getElementById("vis-color").value = item.visual.color;
+            document.getElementById("vis-scale").value = item.visual.scale;
+            document.getElementById("vis-symbol").value = item.visual.symbol;
+            updateScaleLabel();
+            updateStrokeLabel();
+            document.getElementById("vis-status").textContent = "";
+
+            const metricSelect = document.getElementById("attr-metric");
+            metricSelect.innerHTML = item.stats.map(s =>
+                `<option value="${s.name}">${s.name} (${Number(s.value).toLocaleString()})</option>`
+            ).join("");
+
+            const statsContainer = document.getElementById("saved-stats-container");
+            statsContainer.innerHTML = item.stats.map(s => `
+                <div class="mini-stat-card" data-metric="${s.name}" onclick="selectMetric('${s.name}')">
+                    <small>${s.name}</small>
+                    <strong>${Number(s.value).toLocaleString()}</strong>
+                </div>
+            `).join("");
+
+            try {
+                const res = await fetch(`/api/geocode?address=${encodeURIComponent(item.address)}`);
+                const geo = await res.json();
+                if (geo.latitude && geo.longitude) {
+                    currentCoords = [geo.latitude, geo.longitude];
+                    const centerPt = turf.point([geo.longitude, geo.latitude]);
+                    const trueCircle = turf.buffer(centerPt, item.radius, { units: "miles" });
+
+                    await renderCurrentLayer(true);
+                    ensureAnalysisBlocksCached(item, trueCircle).then(() => {
+                        if (document.getElementById("attr-mode").value === "heatmap") {
+                            renderCurrentLayer(false);
+                        }
+                    });
+                }
+            } catch (e) {
+                console.error("Geocoding error:", e);
+            }
+        }
+
+        function getMarkerStyle(shape) {
+            let borderRadius = "50%";
+            let transform = "none";
+            let clipPath = "none";
+
+            if (shape === "square") {
+                borderRadius = "6px";
+            } else if (shape === "diamond") {
+                borderRadius = "4px";
+                transform = "rotate(45deg)";
+            } else if (shape === "hexagon") {
+                borderRadius = "0";
+                clipPath = "polygon(25% 5%, 75% 5%, 100% 50%, 75% 95%, 25% 95%, 0% 50%)";
+            }
+
+            const innerRotate = shape === "diamond" ? "transform:rotate(-45deg);" : "";
+            return { borderRadius, transform, clipPath, innerRotate };
+        }
+
+        async function renderCurrentLayer(fitView = false) {
+            if (currentIndex === -1 || !currentCoords) return;
+
+            const item = analysesData[currentIndex];
+            const [lat, lng] = currentCoords;
+            const attrMode = document.getElementById("attr-mode").value;
+            const selectedMetric = document.getElementById("attr-metric").value;
+            const shape = document.getElementById("vis-shape").value;
+            const color = document.getElementById("vis-color").value;
+            const scale = parseFloat(document.getElementById("vis-scale").value) || 1.0;
+            const strokeWeight = parseInt(document.getElementById("vis-stroke").value, 10) || 3;
+            const symbol = document.getElementById("vis-symbol").value;
+
+            document.querySelectorAll(".mini-stat-card").forEach(card => {
+                card.classList.toggle("selected-attr", card.dataset.metric === selectedMetric);
+            });
+
+            const centerPt = turf.point([lng, lat]);
+            const trueCircle = turf.buffer(centerPt, item.radius, { units: "miles" });
+
+            if (attrMode === "heatmap" && cachedAnalysisId !== item.analysis_id) {
+                document.getElementById("map-legend-box").innerHTML = `Loading ${selectedMetric} heatmap...`;
+                await ensureAnalysisBlocksCached(item, trueCircle);
+            }
+
+            visualLayerGroup.clearLayers();
+
+            const zoneLayer = L.geoJSON(trueCircle, {
+                style: {
+                    color: color,
+                    fillColor: color,
+                    weight: strokeWeight,
+                    dashArray: attrMode === "dashed_zone" ? "8, 8" : null,
+                    fillOpacity: attrMode === "heatmap" ? 0.03 : 0.25
+                }
+            }).addTo(visualLayerGroup);
+
+            if (fitView) {
+                map.fitBounds(zoneLayer.getBounds());
+            }
+
+            const statObj = item.stats.find(s => s.name === selectedMetric);
+            const statVal = statObj ? Number(statObj.value) : 0;
+
+            if (attrMode === "heatmap" && cachedClippedBlocks.length > 0 && selectedMetric) {
+                const code = metricToCode[selectedMetric] || "B01003_001E";
+                const validBlocks = cachedClippedBlocks
+                    .map(b => ({
+                        ...b,
+                        val: cachedCensusStats[b.geoid] ? cachedCensusStats[b.geoid][code] : null
+                    }))
+                    .filter(b => b.val !== null && !isNaN(b.val));
+
+                if (validBlocks.length > 0) {
+                    const values = validBlocks.map(b => b.val);
+                    const minVal = Math.min(...values);
+                    const maxVal = Math.max(...values);
+                    const span = maxVal - minVal || 1;
+
+                    validBlocks.forEach(b => {
+                        const ratio = (b.val - minVal) / span;
+                        const fill = getThermalGradientColor(ratio);
+
+                        L.geoJSON(b.geometry, {
+                            style: {
+                                color: "#ffffff",
+                                opacity: 0.35,
+                                weight: 0.5,
+                                fillColor: fill,
+                                fillOpacity: 0.72
+                            }
+                        })
+                        .bindPopup(`<strong>Block Group ${b.blkgrp}</strong><br>${selectedMetric}: <strong>${Number(b.val).toLocaleString()}</strong>`)
+                        .addTo(visualLayerGroup);
+                    });
+
+                    zoneLayer.bringToFront();
+
+                    document.getElementById("map-legend-box").innerHTML = `
+                        <strong>${selectedMetric} Heatmap</strong><br>
+                        Area Total/Avg: <strong>${statVal.toLocaleString()}</strong>
+                        <div class="heat-bar"></div>
+                        <div style="display:flex; justify-content:space-between; font-size:0.72rem;">
+                            <span>${Math.round(minVal).toLocaleString()}</span>
+                            <span>${Math.round(maxVal).toLocaleString()}</span>
+                        </div>
+                    `;
+                }
+            } else {
+                document.getElementById("map-legend-box").innerHTML = `
+                    <strong>True Search Boundary</strong><br>
+                    Radius: ${item.radius} mi (Unscaled)<br>
+                    Marker Scale: ${scale.toFixed(1)}x (${shape})
+                `;
+            }
+
+            const iconSize = Math.round(38 * scale);
+            const st = getMarkerStyle(shape);
+            const customIcon = L.divIcon({
+                className: "custom-symbology-marker",
+                html: `<div style="
+                    background:${color};
+                    color:#fff;
+                    width:${iconSize}px;
+                    height:${iconSize}px;
+                    border-radius:${st.borderRadius};
+                    transform:${st.transform};
+                    clip-path:${st.clipPath};
+                    display:flex;
+                    align-items:center;
+                    justify-content:center;
+                    font-size:${Math.round(iconSize * 0.32)}px;
+                    font-weight:bold;
+                    border:2px solid #fff;
+                    box-shadow:0 2px 8px rgba(0,0,0,0.6);
+                "><span style="${st.innerRotate}">${symbolBadges[symbol] || "SHOP"}</span></div>`,
+                iconSize: [iconSize, iconSize],
+                iconAnchor: [iconSize / 2, iconSize / 2]
+            });
+
+            const metricLine = statObj ? `<br><strong>${statObj.name}:</strong> ${statVal.toLocaleString()}` : "";
+            L.marker([lat, lng], { icon: customIcon })
+                .bindPopup(`<strong>${item.address}</strong><br>True Search Radius: ${item.radius} mi${metricLine}`)
+                .addTo(visualLayerGroup);
+        }
+
+        async function saveVisualSettings() {
+            if (currentIndex === -1) return;
+            const item = analysesData[currentIndex];
+            const statusEl = document.getElementById("vis-status");
+
+            const payload = {
+                shape: document.getElementById("vis-shape").value,
+                color: document.getElementById("vis-color").value,
+                scale: parseFloat(document.getElementById("vis-scale").value),
+                symbol: document.getElementById("vis-symbol").value
+            };
+
+            statusEl.style.color = "#b0bdd4";
+            statusEl.textContent = "Saving symbology...";
+
+            try {
+                const res = await fetch(`/api/visual/${item.analysis_id}`, {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify(payload)
+                });
+                const data = await res.json();
+                if (data.success) {
+                    item.visual = payload;
+                    statusEl.style.color = "#51cf66";
+                    statusEl.textContent = "Saved! Symbology persisted to PostgreSQL.";
+                } else {
+                    statusEl.style.color = "#ff6b6b";
+                    statusEl.textContent = data.error || "Failed to save.";
+                }
+            } catch (e) {
+                statusEl.style.color = "#ff6b6b";
+                statusEl.textContent = "Network error.";
+            }
+        }
+
+        async function deleteAnalysis(analysisId) {
+            if (!confirm("Delete this saved analysis?")) return;
+            try {
+                const res = await fetch(`/api/analysis/${analysisId}`, { method: "DELETE" });
+                const data = await res.json();
+                if (data.success) {
+                    window.location.reload();
+                }
+            } catch (e) {
+                alert("Error deleting analysis.");
+            }
+        }
+
+        if (analysesData.length > 0) {
+            selectAnalysis(0);
+        }
+    </script>
+</body>
+</html>

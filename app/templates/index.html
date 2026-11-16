@@ -12,15 +12,16 @@
 
 <body>
 
-    <div class="user-bar">
+<div class="user-bar">
         {% if session.get('user') %}
             <span>Logged in as: <strong>{{ session.get('user') }}</strong></span> |
+            <a href="{{ url_for('history') }}">Saved Analyses &amp; Symbology</a> |
+            <a href="{{ url_for('comparison') }}" id="comparison-link">Area Comparison</a> |
             <a href="{{ url_for('logout') }}">Logout</a>
         {% else %}
             <a href="{{ url_for('login') }}">Login</a>
         {% endif %}
     </div>
-    <a href="{{ url_for('comparison') }}" id="comparison-link">Area Comparison</a>
 
     <div id="map-container">
         <div id="map"></div>
@@ -41,7 +42,10 @@
 
     <div id="input-container">
         <input type="text" id="addressInput" placeholder="Enter Address">
-        <input type="range" min="1" max="25" value="10" id="areaRadius">
+        <input type="range" min="1" max="25" value="10" id="areaRadius" oninput="document.getElementById('radiusDisplay').textContent = this.value + ' mi'">
+        <span id="radiusDisplay" style="font-weight: bold; margin-right: 8px;">10 mi</span>
+        <button type="button" id="saveAnalysisBtn">Save Analysis</button>
+        <span id="saveStatus" style="margin-left: 8px; font-weight: bold;"></span>
     </div>
     <div id="checkboxes-container">
 
